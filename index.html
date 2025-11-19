@@ -1,123 +1,708 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Copilot - 智能AI伙伴</title>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f8fa;
-      color: #333;
-    }
-    header {
-      background: #1e90ff;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
-    nav {
-      margin-top: 10px;
-    }
-    nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .hero {
-      text-align: center;
-      padding: 60px 20px;
-      background: linear-gradient(to right, #1e90ff, #00bfff);
-      color: white;
-    }
-    .hero h2 {
-      font-size: 2em;
-      margin-bottom: 20px;
-    }
-    .hero button {
-      background: white;
-      color: #1e90ff;
-      border: none;
-      padding: 15px 30px;
-      font-size: 1em;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .hero button:hover {
-      background: #f0f0f0;
-    }
-    .features {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-    .feature {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin: 15px;
-      padding: 20px;
-      width: 250px;
-      text-align: center;
-    }
-    .feature h3 {
-      color: #1e90ff;
-    }
-    footer {
-      background: #1e90ff;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      margin-top: 40px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lancy的空间 - 强大的工作站</title>
+    <meta name="description" content="在线可视化网页构建器，HTMLPAGE">
+    <meta name="keywords" content="HTMLPAGE">
+    
+    <style>
+        /* CSS 变量定义 */
+        :root {
+            --primary-color: #10a37f;
+            --primary-dark: #0d8a6c;
+            --secondary-color: #94a3b8;
+            --light-color: #0f172a;
+            --dark-color: #f1f5f9;
+            --card-bg: #1e293b;
+            --body-bg: #0f172a;
+            --header-bg: #1e293b;
+            --success-color: #10b981;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+            --text-color: #202123;
+            --text-light: #6e6e80;
+            --bg-color: #ffffff;
+            --bg-light: #f7f7f8;
+            --border-color: #e5e5e7;
+        }
+
+        /* 全局样式重置 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Roboto, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft Yahei", "Microsoft Jhenghei", sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+
+        /* 通用样式 */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: var(--secondary-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 导航栏样式 */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            left: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* 英雄区域样式 */
+        .hero {
+            background-color: initial;
+            color: white;
+            padding: 160px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background-image: linear-gradient(https://youke1.picui.cn/s1/2025/11/12/69146ff913f23.jpg);
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), 
+                radial-gradient(circle at 70% 20%, rgba(37, 99, 235, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-image {
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* 特性区域样式 */
+        .features {
+            background-color: var(--bg-light);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(16, 163, 127, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        /* 产品区域样式 */
+        .products {
+            background-color: var(--body-bg);
+            color: #d4d1d1;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            flex: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            height: 200px;
+            background-color: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 3rem;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .product-content {
+            flex: 1;
+            padding: 25px;
+        }
+
+        .product-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+
+        .product-content p {
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        /* 关于我们区域样式 */
+        .about {
+            background-color: var(--bg-light);
+        }
+
+        .about-content {
+            display: grid;
+            align-items: center;
+            gap: 50px;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h3 {
+            color: var(--dark-color);
+            margin-bottom: 20px;
+        }
+
+        .about-text p {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .about-image {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* 页脚样式 */
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3,
+        .footer-column h4 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            color: var(--dark-color);
+        }
+
+        .footer-column h3::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .footer-column p {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* 特殊样式类 */
+        #iri44 {
+            color: black;
+        }
+
+        #i5eyyp {
+            color: white;
+        }
+
+        .c6103 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            background-image: linear-gradient(https://youke1.picui.cn/s1/2025/11/12/69146ff913f23.jpg);
+        }
+
+        .c6758, .c6877, .c6996 {
+            margin-top: 15px;
+        }
+
+        .c7143 {
+            margin-top: 20px;
+        }
+
+        .c7190 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .c7280 {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .about-content {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--header-bg);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: var(--shadow);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 10px 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-btns .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .nav-actions {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Copilot</h1>
-    <nav>
-      <a href="#">首页</a>
-      <a href="#">功能</a>
-      <a href="#">关于我们</a>
-      <a href="#">联系</a>
-    </nav>
-  </header>
+    <!-- 导航栏 -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">Lancy的空间</a>
+                <ul class="nav-links">
+                    <li><a href="#features">特性</a></li>
+                    <li><a href="#products">产品</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                    <li><a href="#">文档</a></li>
+                </ul>
+                <div class="nav-actions"></div>
+                <button class="mobile-menu-btn">☰</button>
+            </nav>
+        </div>
+    </header>
 
-  <section class="hero">
-    <h2>你的智能AI伙伴，随时随地为你导航 🚀</h2>
-    <button onclick="alert('欢迎体验 Copilot！')">开始体验</button>
-  </section>
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container">
+            <h1 id="iri44">探索科技的无限可能</h1>
+            <p>Lancy致力于开发全新的技术</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn">开始</a>
+            </div>
+            <div class="hero-image">
+                <div id="i9q54" class="c6103">暂无内容</div>
+            </div>
+        </div>
+    </section>
 
-  <section class="features">
-    <div class="feature">
-      <h3>🔍 即时问答</h3>
-      <p>快速获取知识与信息，解决你的疑问。</p>
-    </div>
-    <div class="feature">
-      <h3>💡 创意生成</h3>
-      <p>写作、头脑风暴、诗歌、故事，激发灵感。</p>
-    </div>
-    <div class="feature">
-      <h3>📊 学习助手</h3>
-      <p>引导式学习，适合学生与研究者。</p>
-    </div>
-    <div class="feature">
-      <h3>🎨 图像生成</h3>
-      <p>输入描述即可生成创意图片。</p>
-    </div>
-  </section>
+    <!-- 特性区域 -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>为什么选择Lancy的产品？</h2>
+                <p>我们提供先进的技术，专注于用户体验和实际应用场景</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>前沿技术</h3>
+                    <p>基于研究成果，提供领先的模型性能和准确性。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>安全可靠</h3>
+                    <p>严格的数据保护措施和隐私政策，确保您的数据安全无虞。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>高性能</h3>
+                    <p>优化的算法和基础设施，提供快速响应和稳定的服务体验。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>易于集成</h3>
+                    <p>提供丰富的API和SDK，轻松集成到您的应用程序和工作流程中。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>智能应用</h3>
+                    <p>针对不同行业和场景的定制化解决方案，满足多样化需求。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>完善文档</h3>
+                    <p>详细的开发文档和教程，帮助您快速上手并充分利用我们的技术。</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <footer>
-    <p>© 2025 Copilot AI | 智能伙伴平台</p>
-  </footer>
+    <!-- 产品展示 -->
+    <section id="products" class="products">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="i5eyyp">我们的产品</h2>
+                <p>探索我们强大的产品系列，助力您创新</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image">
+                        <span>📝</span>
+                    </div>
+                    <div class="product-content">
+                        <h3>Lancy的密钥生成器</h3>
+                        <p>多功能密钥生成器，不再担心数据被盗</p>
+                        <a href="#" class="btn c6758">了解更多</a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <span>🤖</span>
+                    </div>
+                    <div class="product-content">
+                        <h3>Lancy的AI</h3>
+                        <p>能与你聊天的AI，由Lancy专属调校，基于OpenAI ChatGPT 4.0</p>
+                        <a href="#" class="btn c6877">了解更多</a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <span>🔍</span>
+                    </div>
+                    <div class="product-content">
+                        <h3>Lancy游戏</h3>
+                        <p>我们使用网页内核制作了一些游戏</p>
+                        <a href="#" class="btn c6996">了解更多</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我们 -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>关于Lancy的空间</h2>
+                    <p>Lancy的空间成立于2020年，是一家专注于技术研发和应用的公司。我们的使命是让技术更加普及和易用，帮助解决实际问题。</p>
+                    <p>我们的团队由来自科技公司和研究机构的专家组成</p>
+                    <p>我们相信，人工智能应该服务于人类，而不是取代人类。我们的产品设计始终以用户为中心，注重实用性和易用性。</p>
+                    <a href="#" class="btn c7143">关于我们</a>
+                </div>
+                <div class="about-image">
+                    <div id="ijxy6c" class="c7190">暂无内容</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h4>Lancy的空间</h4>
+                    <p id="iuftru" class="c7280">探索人工智能的无限可能，创造更美好的未来。</p>
+                </div>
+                <div class="footer-column">
+                    <h4>产品</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Lancy的AI</a></li>
+                        <li><a href="#">API文档</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>公司</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">关于我们</a></li>
+                        <li><a href="#">职业机会</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>法律</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">使用条款</a></li>
+                        <li><a href="#">安全信息</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 Lancy的空间. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 简单的导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.boxShadow = 'none';
+            }
+        });
+        
+        // 移动端菜单切换
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+        const navActions = document.querySelector('.nav-actions');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+            navActions.style.display = navActions.style.display === 'flex' ? 'none' : 'flex';
+        });
+    </script>
 </body>
 </html>
