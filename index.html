@@ -1,708 +1,446 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lancy的空间 - 强大的工作站</title>
-    <meta name="description" content="在线可视化网页构建器，HTMLPAGE">
-    <meta name="keywords" content="HTMLPAGE">
-    
+    <title>Lancy的空间 | Lancy's Space</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS 变量定义 */
+        /* --- 全局变量 --- */
         :root {
-            --primary-color: #10a37f;
-            --primary-dark: #0d8a6c;
-            --secondary-color: #94a3b8;
-            --light-color: #0f172a;
-            --dark-color: #f1f5f9;
-            --card-bg: #1e293b;
-            --body-bg: #0f172a;
-            --header-bg: #1e293b;
-            --success-color: #10b981;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --transition: all 0.3s ease;
-            --text-color: #202123;
-            --text-light: #6e6e80;
             --bg-color: #ffffff;
-            --bg-light: #f7f7f8;
-            --border-color: #e5e5e7;
+            --text-primary: #000000;
+            --text-secondary: #555b66;
+            --accent-color: #000000;
+            --section-spacing: 120px;
+            --border-color: #e5e7eb;
         }
 
-        /* 全局样式重置 */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: "Segoe UI", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; font-size: 16px; }
 
         body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Roboto, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft Yahei", "Microsoft Jhenghei", sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
             background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.75;
+            overflow-x: hidden;
         }
 
-        /* 通用样式 */
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        section {
-            padding: 80px 0;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            background-color: var(--primary-color);
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            color: var(--dark-color);
-            margin-bottom: 15px;
-        }
-
-        .section-title p {
-            color: var(--secondary-color);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* 导航栏样式 */
-        header {
-            background-color: rgba(255, 255, 255, 0.95);
-            box-shadow: var(--shadow);
+        /* --- 3D 动态画布 --- */
+        canvas#canvas3d {
             position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            left: 0;
-            backdrop-filter: blur(10px);
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark-color);
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary-color);
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* 英雄区域样式 */
-        .hero {
-            background-color: initial;
-            color: white;
-            padding: 160px 0 100px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            background-image: linear-gradient(https://youke1.picui.cn/s1/2025/11/12/69146ff913f23.jpg);
-        }
-
-        .hero::before {
-            content: "";
-            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), 
-                radial-gradient(circle at 70% 20%, rgba(37, 99, 235, 0.1) 0%, transparent 50%);
-            z-index: 0;
+            z-index: -1; /* 放在最底层 */
+            background: #ffffff; /* 纯白底色 */
         }
 
-        .hero .container {
+        /* --- 导航栏 --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.3s;
+        }
+
+        nav.scrolled { border-bottom: 1px solid var(--border-color); }
+
+        .logo { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 0.95rem;
+            transition: color 0.2s; position: relative;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+
+        /* --- 通用布局 --- */
+        section {
+            padding: var(--section-spacing) 10%;
+            max-width: 1200px;
+            margin: 0 auto;
             position: relative;
             z-index: 1;
         }
 
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+        h1, h2, h3 { color: var(--text-primary); font-weight: 700; letter-spacing: -1px; }
+        h2 { font-size: 2.5rem; margin-bottom: 2rem; }
+        p { color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1.5rem; max-width: 700px; }
 
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto 2.5rem;
-            opacity: 0.9;
+        /* --- Hero 区域 --- */
+        #home {
+            padding-top: 180px; padding-bottom: 100px; min-height: 85vh;
+            display: flex; flex-direction: column; justify-content: center;
         }
-
-        .hero-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 50px;
+        .hero-title {
+            font-size: 4.5rem; line-height: 1.1; margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #000, #444);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
-        .hero-image {
-            max-width: 900px;
-            margin: 0 auto;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
+        .typewriter-container {
+            font-size: 1.5rem; color: var(--text-primary); font-weight: 500;
+            margin-bottom: 3rem; display: flex; align-items: center;
         }
-
-        .hero-image img {
-            width: 100%;
-            height: auto;
-            display: block;
+        #typewriter { margin-right: 5px; }
+        .cursor {
+            display: inline-block; width: 3px; height: 1.5rem;
+            background-color: var(--text-primary); animation: blink 1s step-end infinite;
         }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        /* 特性区域样式 */
-        .features {
-            background-color: var(--bg-light);
+        .btn-group { display: flex; gap: 1rem; }
+        .btn {
+            padding: 0.9rem 2rem; border-radius: 4px; text-decoration: none;
+            font-weight: 600; transition: all 0.2s ease; font-size: 1rem;
         }
+        .btn-primary { background-color: var(--text-primary); color: #fff; border: 1px solid transparent; }
+        .btn-primary:hover { background-color: #333; }
+        .btn-secondary { background-color: transparent; color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { border-color: var(--text-primary); background-color: rgba(255,255,255,0.8); }
 
-        .section-header {
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 60px;
+        /* --- 作品集 --- */
+        .grid-portfolio {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem; margin-top: 3rem;
         }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+        .portfolio-card {
+            background: rgba(255, 255, 255, 0.8); /* 卡片轻微半透明，透出粒子 */
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer;
+            display: flex; flex-direction: column; justify-content: space-between; min-height: 280px;
         }
-
-        .feature-card {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
+        .portfolio-card:hover {
+            transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: #ccc;
         }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
+        .portfolio-card h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .portfolio-link {
+            margin-top: auto; color: var(--text-primary); text-decoration: none;
+            font-weight: 600; display: inline-flex; align-items: center;
         }
+        .portfolio-link::after { content: '→'; margin-left: 8px; transition: margin-left 0.2s; }
+        .portfolio-card:hover .portfolio-link::after { margin-left: 12px; }
 
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(16, 163, 127, 0.1);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            font-size: 1.5rem;
+        /* --- 介绍 & 关于 --- */
+        #intro { text-align: center; }
+        .intro-statement { font-size: 2.5rem; font-weight: 600; max-width: 900px; margin: 0 auto; line-height: 1.3; }
+        
+        #about { display: flex; justify-content: space-between; align-items: flex-start; gap: 4rem; }
+        .about-content { flex: 2; }
+        .about-stats {
+            flex: 1; display: flex; flex-direction: column; gap: 2rem; padding: 2rem;
+            background: #f9fafb; border-radius: 8px;
         }
+        .stat-item h4 { font-size: 2.5rem; font-weight: 700; color: var(--text-primary); }
+        .stat-item p { font-size: 1rem; margin: 0; }
 
-        /* 产品区域样式 */
-        .products {
-            background-color: var(--body-bg);
-            color: #d4d1d1;
+        /* --- 联系我们 --- */
+        #contact { text-align: left; border-top: 1px solid var(--border-color); }
+        .contact-container { display: flex; justify-content: space-between; }
+        .contact-info h2 { font-size: 3rem; }
+        .contact-links a {
+            display: block; font-size: 1.5rem; color: var(--text-primary);
+            text-decoration: none; margin-bottom: 1rem; font-weight: 600;
         }
+        .contact-links a:hover { text-decoration: underline; }
 
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .product-card {
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .product-card:hover {
-            box-shadow: var(--shadow);
-            transform: translateY(-5px);
-        }
-
-        .product-image {
-            flex: 1;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            height: 200px;
-            background-color: var(--bg-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            font-size: 3rem;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .product-content {
-            flex: 1;
-            padding: 25px;
-        }
-
-        .product-content h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: var(--dark-color);
-        }
-
-        .product-content p {
-            margin-bottom: 20px;
-            color: var(--secondary-color);
-        }
-
-        /* 关于我们区域样式 */
-        .about {
-            background-color: var(--bg-light);
-        }
-
-        .about-content {
-            display: grid;
-            align-items: center;
-            gap: 50px;
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .about-text {
-            flex: 1;
-        }
-
-        .about-text h3 {
-            color: var(--dark-color);
-            margin-bottom: 20px;
-        }
-
-        .about-text p {
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-        }
-
-        .about-image {
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* 页脚样式 */
+        /* --- 底部 --- */
         footer {
-            background-color: var(--text-color);
-            color: white;
-            padding: 60px 0 30px;
+            padding: 3rem 10%; font-size: 0.9rem; color: var(--text-secondary);
+            background: #fff; display: flex; justify-content: space-between; align-items: center;
+            position: relative; z-index: 2;
         }
 
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-column h3,
-        .footer-column h4 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            position: relative;
-            color: var(--dark-color);
-        }
-
-        .footer-column h3::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -8px;
-            width: 40px;
-            height: 2px;
-            background-color: var(--primary-color);
-        }
-
-        .footer-column p {
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: white;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
-
-        /* 特殊样式类 */
-        #iri44 {
-            color: black;
-        }
-
-        #i5eyyp {
-            color: white;
-        }
-
-        .c6103 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            background-image: linear-gradient(https://youke1.picui.cn/s1/2025/11/12/69146ff913f23.jpg);
-        }
-
-        .c6758, .c6877, .c6996 {
-            margin-top: 15px;
-        }
-
-        .c7143 {
-            margin-top: 20px;
-        }
-
-        .c7190 {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .c7280 {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 992px) {
-            .about-content {
-                flex-direction: column;
-            }
-        }
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
 
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background-color: var(--header-bg);
-                flex-direction: column;
-                padding: 20px;
-                box-shadow: var(--shadow);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links li {
-                margin: 10px 0;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-btns .btn {
-                width: 100%;
-                max-width: 250px;
-            }
-
-            h1 {
-                font-size: 2.5rem;
-            }
-
-            h2 {
-                font-size: 2rem;
-            }
-
-            .nav-actions {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .about-content {
-                grid-template-columns: 1fr;
-            }
+            .hero-title { font-size: 3rem; }
+            nav { padding: 1rem; }
+            .nav-links { display: none; }
+            section { padding: 80px 5%; }
+            #about { flex-direction: column; }
+            .about-stats { width: 100%; flex-direction: row; justify-content: space-around; }
+            .contact-container { flex-direction: column; gap: 2rem; }
         }
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <a href="#" class="logo">Lancy的空间</a>
-                <ul class="nav-links">
-                    <li><a href="#features">特性</a></li>
-                    <li><a href="#products">产品</a></li>
-                    <li><a href="#about">关于我们</a></li>
-                    <li><a href="#">文档</a></li>
-                </ul>
-                <div class="nav-actions"></div>
-                <button class="mobile-menu-btn">☰</button>
-            </nav>
-        </div>
-    </header>
 
-    <!-- 英雄区域 -->
-    <section class="hero">
-        <div class="container">
-            <h1 id="iri44">探索科技的无限可能</h1>
-            <p>Lancy致力于开发全新的技术</p>
-            <div class="hero-buttons">
-                <a href="#" class="btn">开始</a>
+    <canvas id="canvas3d"></canvas>
+
+    <nav id="navbar">
+        <div class="logo">Lancy's Space</div>
+        <div class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#portfolio">作品</a>
+            <a href="#intro">介绍</a>
+            <a href="#about">关于我们</a>
+            <a href="#contact">联系我们</a>
+        </div>
+    </nav>
+
+    <section id="home">
+        <div class="reveal">
+            <h1 class="hero-title">Lancy的空间<br>-数字体验的未来。</h1>
+            <div class="typewriter-container">
+                我是一名 <span id="typewriter"></span><span class="cursor"></span>
             </div>
-            <div class="hero-image">
-                <div id="i9q54" class="c6103">暂无内容</div>
+            <p>欢迎来到 Lancy 的空间。这里展示了我对技术与设计融合的探索，致力于打造简洁、智能且富有影响力的数字产品。</p>
+            <div class="btn-group">
+                <a href="#portfolio" class="btn btn-primary">查看作品</a>
+                <a href="#contact" class="btn btn-secondary">联系我们</a>
             </div>
         </div>
     </section>
 
-    <!-- 特性区域 -->
-    <section id="features" class="features">
-        <div class="container">
-            <div class="section-header">
-                <h2>为什么选择Lancy的产品？</h2>
-                <p>我们提供先进的技术，专注于用户体验和实际应用场景</p>
+    <section id="portfolio">
+        <div class="reveal">
+            <h2>精选作品</h2>
+            <p>一系列关于设计思维、前端技术与用户体验的实践项目。</p>
+        </div>
+        <div class="grid-portfolio">
+            <div class="portfolio-card reveal" style="transition-delay: 0.1s">
+                <div>
+                    <h3>Project Nexus</h3>
+                    <p>一个探索未来数据交互界面的概念设计，强调信息的流动性与直观操作。</p>
+                </div>
+                <span class="portfolio-link">了解详情</span>
             </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>前沿技术</h3>
-                    <p>基于研究成果，提供领先的模型性能和准确性。</p>
+            <div class="portfolio-card reveal" style="transition-delay: 0.2s">
+                <div>
+                    <h3>Minimalist UI Kit</h3>
+                    <p>基于 React 构建的轻量级组件库，专注于极简主义风格与高性能复用。</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
-                    <h3>安全可靠</h3>
-                    <p>严格的数据保护措施和隐私政策，确保您的数据安全无虞。</p>
+                <span class="portfolio-link">查看代码</span>
+            </div>
+            <div class="portfolio-card reveal" style="transition-delay: 0.3s">
+                <div>
+                    <h3>Aesthetic Notes</h3>
+                    <p>一款专注于写作体验的笔记应用，融合了排版美学与沉浸式交互。</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>高性能</h3>
-                    <p>优化的算法和基础设施，提供快速响应和稳定的服务体验。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌐</div>
-                    <h3>易于集成</h3>
-                    <p>提供丰富的API和SDK，轻松集成到您的应用程序和工作流程中。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💡</div>
-                    <h3>智能应用</h3>
-                    <p>针对不同行业和场景的定制化解决方案，满足多样化需求。</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📚</div>
-                    <h3>完善文档</h3>
-                    <p>详细的开发文档和教程，帮助您快速上手并充分利用我们的技术。</p>
-                </div>
+                <span class="portfolio-link">阅读案例</span>
             </div>
         </div>
     </section>
 
-    <!-- 产品展示 -->
-    <section id="products" class="products">
-        <div class="container">
-            <div class="section-header">
-                <h2 id="i5eyyp">我们的产品</h2>
-                <p>探索我们强大的产品系列，助力您创新</p>
+    <section id="intro">
+        <h2 class="intro-statement reveal">
+            "我们的目标不仅仅是编写代码，而是通过技术构建桥梁，连接人类的想象力与数字世界的无限可能。"
+        </h2>
+    </section>
+
+    <section id="about">
+        <div class="about-content reveal">
+            <h2>关于 Lancy's Space</h2>
+            <p>Lancy's Space 起源于一个简单的想法：在这个信息爆炸的时代，我们需要更清晰、更具人文关怀的数字体验。</p>
+            <p>作为一个独立创造者（有时也会与志同道合的伙伴合作），我专注于 Web 技术的前沿探索，无论是令人愉悦的界面设计，还是坚实可靠的后端逻辑。</p>
+            <p>这里崇尚极简、高效与持续迭代。我相信优秀的产品是在不断的思考与重构中诞生的。</p>
+        </div>
+        <div class="about-stats reveal" style="transition-delay: 0.2s">
+            <div class="stat-item">
+                <h4>3+</h4>
+                <p>专注于数字领域 (年)</p>
             </div>
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="product-image">
-                        <span>📝</span>
-                    </div>
-                    <div class="product-content">
-                        <h3>Lancy的密钥生成器</h3>
-                        <p>多功能密钥生成器，不再担心数据被盗</p>
-                        <a href="#" class="btn c6758">了解更多</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <div class="product-image">
-                        <span>🤖</span>
-                    </div>
-                    <div class="product-content">
-                        <h3>Lancy的AI</h3>
-                        <p>能与你聊天的AI，由Lancy专属调校，基于OpenAI ChatGPT 4.0</p>
-                        <a href="#" class="btn c6877">了解更多</a>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <div class="product-image">
-                        <span>🔍</span>
-                    </div>
-                    <div class="product-content">
-                        <h3>Lancy游戏</h3>
-                        <p>我们使用网页内核制作了一些游戏</p>
-                        <a href="#" class="btn c6996">了解更多</a>
-                    </div>
-                </div>
+            <div class="stat-item">
+                <h4>20+</h4>
+                <p>完成的项目与实验</p>
             </div>
         </div>
     </section>
 
-    <!-- 关于我们 -->
-    <section id="about" class="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>关于Lancy的空间</h2>
-                    <p>Lancy的空间成立于2020年，是一家专注于技术研发和应用的公司。我们的使命是让技术更加普及和易用，帮助解决实际问题。</p>
-                    <p>我们的团队由来自科技公司和研究机构的专家组成</p>
-                    <p>我们相信，人工智能应该服务于人类，而不是取代人类。我们的产品设计始终以用户为中心，注重实用性和易用性。</p>
-                    <a href="#" class="btn c7143">关于我们</a>
-                </div>
-                <div class="about-image">
-                    <div id="ijxy6c" class="c7190">暂无内容</div>
-                </div>
+    <section id="contact">
+        <div class="contact-container reveal">
+            <div class="contact-info">
+                <h2>开始对话</h2>
+                <p>有合作意向，或者只是想聊聊新的想法？<br>随时欢迎来信。</p>
+            </div>
+            <div class="contact-links">
+                <a href="https://github.com/jjc114/" target="_blank">Github ↗</a>
+                <a href="https://space.bilibili.com/3493085046639270" target="_blank">Bilibili ↗</a>
             </div>
         </div>
     </section>
 
-    <!-- 页脚 -->
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h4>Lancy的空间</h4>
-                    <p id="iuftru" class="c7280">探索人工智能的无限可能，创造更美好的未来。</p>
-                </div>
-                <div class="footer-column">
-                    <h4>产品</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Lancy的AI</a></li>
-                        <li><a href="#">API文档</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>公司</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">关于我们</a></li>
-                        <li><a href="#">职业机会</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>法律</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">隐私政策</a></li>
-                        <li><a href="#">使用条款</a></li>
-                        <li><a href="#">安全信息</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>© 2025 Lancy的空间. 保留所有权利.</p>
-            </div>
-        </div>
+        <div class="logo" style="font-size: 1rem;">Lancy's Space</div>
+        <p>&copy; 2025 Lancy. Based on minimalist principles.</p>
     </footer>
 
     <script>
-        // 简单的导航栏滚动效果
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('header');
-            if (window.scrollY > 50) {
-                header.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-            } else {
-                header.style.boxShadow = 'none';
+        // --- 1. 高密度 3D 粒子网络 ---
+        const canvas = document.getElementById('canvas3d');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        const mouse = { x: 0, y: 0, isActive: false };
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            initParticles();
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.z = Math.random() * 0.8 + 0.2; 
+                // 稍微减小粒子基础大小，因为数量多了
+                this.baseSize = Math.random() * 2.0;
+                
+                // 【修改点1：提高随机速度】
+                // 速度系数从 0.5 提高到 1.8，让粒子自身运动更活跃
+                this.vx = (Math.random() - 0.5) * 1.8 * this.z;
+                this.vy = (Math.random() - 0.5) * 1.8 * this.z;
             }
+
+            update() {
+                // 基础随机移动
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 鼠标交互 (仍然保留，但相对基础速度来说影响变小了)
+                if (mouse.isActive) {
+                    const dx = (mouse.x - width / 2) * 0.05;
+                    const dy = (mouse.y - height / 2) * 0.05;
+                    this.x += (dx * this.z - (this.x - width/2) * 0.01) * 0.08;
+                    this.y += (dy * this.z - (this.y - height/2) * 0.01) * 0.08;
+                }
+
+                // 边界循环
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+
+            draw() {
+                const size = this.baseSize * this.z;
+                // 稍微降低透明度，避免太密集时显得杂乱
+                const opacity = 0.05 + this.z * 0.25;
+
+                ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            // 【修改点2：大幅增加粒子密度】
+            // 分母从 15000 改为 3000，粒子数量增加约 5 倍，填满屏幕
+            const count = Math.floor((width * height) / 3000);
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animate);
+        }
+
+        function connectParticles() {
+            // 【修改点3：优化连接距离】
+            // 因为粒子变密了，我们将最大连接距离从 150 缩小到 110
+            // 既能保持网络感，又能节省性能
+            const maxDist = 110;
+
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p1 = particles[i];
+                    const p2 = particles[j];
+                    if (Math.abs(p1.z - p2.z) > 0.2) continue;
+
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < maxDist) {
+                        // 透明度也随新的最大距离调整，并稍微调高一点最大不透明度
+                        const alpha = (1 - dist / maxDist) * 0.18 * p1.z;
+                        ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('resize', resize);
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            mouse.isActive = true;
         });
-        
-        // 移动端菜单切换
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navLinks = document.querySelector('.nav-links');
-        const navActions = document.querySelector('.nav-actions');
-        
-        mobileMenuBtn.addEventListener('click', function() {
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-            navActions.style.display = navActions.style.display === 'flex' ? 'none' : 'flex';
+        resize();
+        animate();
+
+
+        // --- 2. 原有逻辑 ---
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
         });
+
+        const textToType = ["设计师 (Designer)", "开发者 (Developer)", "探索者 (Explorer)"];
+        let typeIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typeElement = document.getElementById('typewriter');
+
+        function type() {
+            const currentText = textToType[typeIndex];
+            if (isDeleting) {
+                typeElement.textContent = currentText.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typeElement.textContent = currentText.substring(0, charIndex + 1);
+                charIndex++;
+            }
+            let typeSpeed = isDeleting ? 50 : 100;
+            if (!isDeleting && charIndex === currentText.length) {
+                typeSpeed = 3000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                typeIndex = (typeIndex + 1) % textToType.length;
+                typeSpeed = 500;
+            }
+            setTimeout(type, typeSpeed);
+        }
+        document.addEventListener('DOMContentLoaded', type);
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
