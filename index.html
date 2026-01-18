@@ -1,446 +1,281 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lancy的空间 | Lancy's Space</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>LancyUI | 下一代开源分布式系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'md-primary': '#005fb0',
+                        'md-on-primary': '#ffffff',
+                        'md-surface': '#fdfbff',
+                        'md-surface-variant': '#e1e2ec',
+                        'md-secondary-container': '#d6e3ff',
+                        'md-tertiary': '#7d5260'
+                    },
+                    borderRadius: { 'md-xl': '28px' }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* --- 全局变量 --- */
-        :root {
-            --bg-color: #ffffff;
-            --text-primary: #000000;
-            --text-secondary: #555b66;
-            --accent-color: #000000;
-            --section-spacing: 120px;
-            --border-color: #e5e7eb;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html { scroll-behavior: smooth; font-size: 16px; }
-
-        body {
-            font-family: 'Inter', 'Noto Sans SC', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            line-height: 1.75;
-            overflow-x: hidden;
-        }
-
-        /* --- 3D 动态画布 --- */
-        canvas#canvas3d {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* 放在最底层 */
-            background: #ffffff; /* 纯白底色 */
-        }
-
-        /* --- 导航栏 --- */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1.2rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            z-index: 100;
-            border-bottom: 1px solid transparent;
-            transition: border-bottom 0.3s;
-        }
-
-        nav.scrolled { border-bottom: 1px solid var(--border-color); }
-
-        .logo { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
-        .nav-links { display: flex; gap: 2rem; }
-        .nav-links a {
-            color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 0.95rem;
-            transition: color 0.2s; position: relative;
-        }
-        .nav-links a:hover { color: var(--text-primary); }
-
-        /* --- 通用布局 --- */
-        section {
-            padding: var(--section-spacing) 10%;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        h1, h2, h3 { color: var(--text-primary); font-weight: 700; letter-spacing: -1px; }
-        h2 { font-size: 2.5rem; margin-bottom: 2rem; }
-        p { color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1.5rem; max-width: 700px; }
-
-        /* --- Hero 区域 --- */
-        #home {
-            padding-top: 180px; padding-bottom: 100px; min-height: 85vh;
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .hero-title {
-            font-size: 4.5rem; line-height: 1.1; margin-bottom: 1.5rem;
-            background: linear-gradient(90deg, #000, #444);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .typewriter-container {
-            font-size: 1.5rem; color: var(--text-primary); font-weight: 500;
-            margin-bottom: 3rem; display: flex; align-items: center;
-        }
-        #typewriter { margin-right: 5px; }
-        .cursor {
-            display: inline-block; width: 3px; height: 1.5rem;
-            background-color: var(--text-primary); animation: blink 1s step-end infinite;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        .btn-group { display: flex; gap: 1rem; }
-        .btn {
-            padding: 0.9rem 2rem; border-radius: 4px; text-decoration: none;
-            font-weight: 600; transition: all 0.2s ease; font-size: 1rem;
-        }
-        .btn-primary { background-color: var(--text-primary); color: #fff; border: 1px solid transparent; }
-        .btn-primary:hover { background-color: #333; }
-        .btn-secondary { background-color: transparent; color: var(--text-primary); border: 1px solid var(--border-color); }
-        .btn-secondary:hover { border-color: var(--text-primary); background-color: rgba(255,255,255,0.8); }
-
-        /* --- 作品集 --- */
-        .grid-portfolio {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem; margin-top: 3rem;
-        }
-        .portfolio-card {
-            background: rgba(255, 255, 255, 0.8); /* 卡片轻微半透明，透出粒子 */
-            backdrop-filter: blur(5px);
-            border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer;
-            display: flex; flex-direction: column; justify-content: space-between; min-height: 280px;
-        }
-        .portfolio-card:hover {
-            transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: #ccc;
-        }
-        .portfolio-card h3 { font-size: 1.5rem; margin-bottom: 1rem; }
-        .portfolio-link {
-            margin-top: auto; color: var(--text-primary); text-decoration: none;
-            font-weight: 600; display: inline-flex; align-items: center;
-        }
-        .portfolio-link::after { content: '→'; margin-left: 8px; transition: margin-left 0.2s; }
-        .portfolio-card:hover .portfolio-link::after { margin-left: 12px; }
-
-        /* --- 介绍 & 关于 --- */
-        #intro { text-align: center; }
-        .intro-statement { font-size: 2.5rem; font-weight: 600; max-width: 900px; margin: 0 auto; line-height: 1.3; }
+        /* 1. MD3 进度条动画 */
+        #loading-bar { height: 3px; position: fixed; top: 0; left: 0; width: 0; background: #005fb0; z-index: 100; transition: width 0.3s ease; }
         
-        #about { display: flex; justify-content: space-between; align-items: flex-start; gap: 4rem; }
-        .about-content { flex: 2; }
-        .about-stats {
-            flex: 1; display: flex; flex-direction: column; gap: 2rem; padding: 2rem;
-            background: #f9fafb; border-radius: 8px;
+        /* 2. 导航激活状态 */
+        .nav-link { position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-link.active { color: #005fb0; font-weight: 700; }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: -4px; left: 50%; width: 0; height: 3px;
+            background: #005fb0; transform: translateX(-50%); transition: width 0.3s ease;
         }
-        .stat-item h4 { font-size: 2.5rem; font-weight: 700; color: var(--text-primary); }
-        .stat-item p { font-size: 1rem; margin: 0; }
+        .nav-link.active::after { width: 100%; }
 
-        /* --- 联系我们 --- */
-        #contact { text-align: left; border-top: 1px solid var(--border-color); }
-        .contact-container { display: flex; justify-content: space-between; }
-        .contact-info h2 { font-size: 3rem; }
-        .contact-links a {
-            display: block; font-size: 1.5rem; color: var(--text-primary);
-            text-decoration: none; margin-bottom: 1rem; font-weight: 600;
-        }
-        .contact-links a:hover { text-decoration: underline; }
+        /* 3. Toast 弹出动画 */
+        #toast { transform: translateY(100px); transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1); }
+        #toast.show { transform: translateY(-32px); }
 
-        /* --- 底部 --- */
-        footer {
-            padding: 3rem 10%; font-size: 0.9rem; color: var(--text-secondary);
-            background: #fff; display: flex; justify-content: space-between; align-items: center;
-            position: relative; z-index: 2;
-        }
+        /* 4. 手风琴 */
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-item.active .accordion-content { max-height: 200px; }
+        .accordion-item.active .chevron { transform: rotate(180deg); }
 
-        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-
-        @media (max-width: 768px) {
-            .hero-title { font-size: 3rem; }
-            nav { padding: 1rem; }
-            .nav-links { display: none; }
-            section { padding: 80px 5%; }
-            #about { flex-direction: column; }
-            .about-stats { width: 100%; flex-direction: row; justify-content: space-around; }
-            .contact-container { flex-direction: column; gap: 2rem; }
-        }
+        .hero-mask { background: linear-gradient(to bottom, transparent, #fdfbff); }
+        .dark .hero-mask { background: linear-gradient(to bottom, transparent, #1a1c1e); }
     </style>
 </head>
-<body>
+<body class="bg-md-surface dark:bg-[#1a1c1e] text-gray-900 dark:text-gray-100 overflow-x-hidden transition-colors duration-300">
 
-    <canvas id="canvas3d"></canvas>
+    <div id="loading-bar"></div>
 
-    <nav id="navbar">
-        <div class="logo">Lancy's Space</div>
-        <div class="nav-links">
-            <a href="#home">首页</a>
-            <a href="#portfolio">作品</a>
-            <a href="#intro">介绍</a>
-            <a href="#about">关于我们</a>
-            <a href="#contact">联系我们</a>
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-[#1a1c1e]/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('home')">
+                <span class="material-symbols-outlined text-md-primary text-3xl font-bold">dynamic_form</span>
+                <span class="text-xl font-bold tracking-tight">LancyUI</span>
+            </div>
+            <div class="hidden md:flex space-x-10">
+                <button onclick="switchTab('home', this)" class="nav-link active text-sm font-medium">概览</button>
+                <button onclick="switchTab('features', this)" class="nav-link text-gray-500 text-sm font-medium">技术特性</button>
+                <button onclick="switchTab('docs', this)" class="nav-link text-gray-500 text-sm font-medium">安装指南</button>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleDarkMode()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all">
+                    <span id="theme-icon" class="material-symbols-outlined">light_mode</span>
+                </button>
+<button onclick="redirectToGithub()" class="flex items-center gap-2 bg-md-primary text-white px-6 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg active:scale-95 transition-all">
+    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+    获取源码
+</button>
+<section id="page-community" class="page-content hidden px-6 py-24 text-center">
+    
+    <h2 class="text-4xl font-bold mb-8">参与贡献</h2>
+    <div class="bg-md-secondary-container/50 p-8 rounded-md-xl max-w-2xl mx-auto">
+        <p class="mb-6 text-md-on-secondary-container">发现 Bug 或有新想法？我们的代码完全透明。欢迎提交 Pull Request。</p>
+        <button onclick="redirectToGithub('issues')" class="px-8 py-3 border-2 border-md-primary text-md-primary rounded-full font-bold hover:bg-md-primary hover:text-white transition-all">
+            提交 Issue
+        </button>
+    </div>
+</section>
+
+<script>
+    const GITHUB_REPO = "https://github.com/jjc114"; // 替换为你的真实链接
+
+    /**
+     * 重定向至 GitHub，并触发 Toast 提示
+     * @param {string} path - 可选路径，如 'issues' 或 'pulls'
+     */
+    function redirectToGithub(path = "") {
+        const url = path ? `${GITHUB_REPO}/${path}` : GITHUB_REPO;
+        
+        // 1. 显示 MD3 Toast 提示
+        showToast("正在前往 GitHub 仓库...");
+
+        // 2. 延迟跳转，给用户一个视觉反馈时间
+        setTimeout(() => {
+            window.open(url, '_blank');
+        }, 800);
+    }
+
+    // 现有的 Toast 显示逻辑
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-message');
+        if (toast && toastMsg) {
+            toastMsg.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    }
+</script>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <section id="home">
-        <div class="reveal">
-            <h1 class="hero-title">Lancy的空间<br>-数字体验的未来。</h1>
-            <div class="typewriter-container">
-                我是一名 <span id="typewriter"></span><span class="cursor"></span>
-            </div>
-            <p>欢迎来到 Lancy 的空间。这里展示了我对技术与设计融合的探索，致力于打造简洁、智能且富有影响力的数字产品。</p>
-            <div class="btn-group">
-                <a href="#portfolio" class="btn btn-primary">查看作品</a>
-                <a href="#contact" class="btn btn-secondary">联系我们</a>
-            </div>
-        </div>
-    </section>
-
-    <section id="portfolio">
-        <div class="reveal">
-            <h2>精选作品</h2>
-            <p>一系列关于设计思维、前端技术与用户体验的实践项目。</p>
-        </div>
-        <div class="grid-portfolio">
-            <div class="portfolio-card reveal" style="transition-delay: 0.1s">
-                <div>
-                    <h3>Project Nexus</h3>
-                    <p>一个探索未来数据交互界面的概念设计，强调信息的流动性与直观操作。</p>
+    <main class="min-h-screen">
+        
+        <section id="page-home" class="page-content block">
+            <div class="relative h-[80vh] flex items-center justify-center text-center overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=2000" class="absolute inset-0 w-full h-full object-cover opacity-30 dark:opacity-20" alt="Hero">
+                <div class="hero-mask absolute inset-0"></div>
+                <div class="relative z-10 px-6">
+                    <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tight">Lancy<span class="text-md-primary">.fun</span></h1>
+                    <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">以fun命名,带给你不一样的快乐!</p>
+                    <button onclick="switchTab('docs')" class="px-12 py-4 bg-md-primary text-white rounded-full font-bold shadow-xl hover:scale-105 active:scale-95 transition-all">开始安装LancyUI</button>
                 </div>
-                <span class="portfolio-link">了解详情</span>
             </div>
-            <div class="portfolio-card reveal" style="transition-delay: 0.2s">
-                <div>
-                    <h3>Minimalist UI Kit</h3>
-                    <p>基于 React 构建的轻量级组件库，专注于极简主义风格与高性能复用。</p>
+
+            <div class="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-8 bg-gray-50 dark:bg-gray-800/50 rounded-md-xl border border-gray-100 dark:border-gray-700">
+                    <h3 class="font-bold text-gray-400 mb-4 uppercase tracking-widest text-xs">延迟对比 (ms)</h3>
+                    <div class="space-y-4">
+                        <div class="relative pt-1">
+                            <div class="flex items-center justify-between mb-1"><span class="text-xs font-semibold">传统系统</span><span class="text-xs font-semibold">120ms</span></div>
+                            <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200"><div style="width:80%" class="bg-gray-400"></div></div>
+                        </div>
+                        <div class="relative pt-1">
+                            <div class="flex items-center justify-between mb-1"><span class="text-xs font-semibold text-md-primary">LancyUI</span><span class="text-xs font-semibold text-md-primary">0.8ms</span></div>
+                            <div class="overflow-hidden h-2 text-xs flex rounded bg-md-secondary-container"><div style="width:15%" class="bg-md-primary"></div></div>
+                        </div>
+                    </div>
                 </div>
-                <span class="portfolio-link">查看代码</span>
-            </div>
-            <div class="portfolio-card reveal" style="transition-delay: 0.3s">
-                <div>
-                    <h3>Aesthetic Notes</h3>
-                    <p>一款专注于写作体验的笔记应用，融合了排版美学与沉浸式交互。</p>
+                <div class="md:col-span-2 p-8 bg-md-secondary-container/30 rounded-md-xl">
+                    <h3 class="text-2xl font-bold mb-4">为什么选择 LancyUI?</h3>
+                    <p class="text-gray-600 dark:text-gray-400">不同于通用的 Linux 发行版，我们剥离了繁重的驱动层，直接在微内核之上提供 WASM 运行时，让应用部署速度提升 3 倍。</p>
                 </div>
-                <span class="portfolio-link">阅读案例</span>
             </div>
-        </div>
-    </section>
+            
+        </section>
 
-    <section id="intro">
-        <h2 class="intro-statement reveal">
-            "我们的目标不仅仅是编写代码，而是通过技术构建桥梁，连接人类的想象力与数字世界的无限可能。"
-        </h2>
-    </section>
+        <section id="page-features" class="page-content hidden px-6 py-20 max-w-5xl mx-auto">
+            <h2 class="text-4xl font-bold mb-12 text-center">核心架构特性</h2>
+            
+            <div class="space-y-4">
+                <div class="accordion-item border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden active">
+                    <button onclick="toggleAccordion(this)" class="w-full p-6 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
+                        <span class="font-bold">01. 声明式资源管理</span>
+                        <span class="material-symbols-outlined chevron transition-transform">expand_more</span>
+                    </button>
+                    <div class="accordion-content bg-gray-50/50 dark:bg-gray-900/50">
+                        <div class="p-6 text-gray-600 dark:text-gray-400">通过 YAML 格式定义资源配额，内核自动完成 CPU 与内存的硬性隔离，防止单个应用导致系统崩溃。</div>
+                    </div>
+                </div>
+                <div class="accordion-item border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full p-6 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
+                        <span class="font-bold">02. 跨平台二进制分发</span>
+                        <span class="material-symbols-outlined chevron transition-transform">expand_more</span>
+                    </button>
+                    <div class="accordion-content bg-gray-50/50 dark:bg-gray-900/50">
+                        <div class="p-6 text-gray-600 dark:text-gray-400">支持一次编译，在 ARM、x86 及 RISC-V 架构上无缝运行，内核自动处理指令集差异。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <section id="about">
-        <div class="about-content reveal">
-            <h2>关于 Lancy's Space</h2>
-            <p>Lancy's Space 起源于一个简单的想法：在这个信息爆炸的时代，我们需要更清晰、更具人文关怀的数字体验。</p>
-            <p>作为一个独立创造者（有时也会与志同道合的伙伴合作），我专注于 Web 技术的前沿探索，无论是令人愉悦的界面设计，还是坚实可靠的后端逻辑。</p>
-            <p>这里崇尚极简、高效与持续迭代。我相信优秀的产品是在不断的思考与重构中诞生的。</p>
-        </div>
-        <div class="about-stats reveal" style="transition-delay: 0.2s">
-            <div class="stat-item">
-                <h4>3+</h4>
-                <p>专注于数字领域 (年)</p>
+        <section id="page-docs" class="page-content hidden px-6 py-20 max-w-4xl mx-auto">
+            <div class="prose dark:prose-invert max-w-none">
+                <h2 class="text-3xl font-bold mb-6">快速上手</h2>
+                <div class="bg-gray-900 text-gray-300 p-6 rounded-md-xl font-mono text-sm mb-8 relative group">
+                    <button onclick="copyCode(this)" class="absolute top-4 right-4 p-2 bg-white/10 rounded-lg opacity-0 group-hover:opacity-100 transition-all">
+                        <span class="material-symbols-outlined text-sm">content_copy</span>
+                    </button>
+                    <code>$ aether install-toolchain</code><br>
+                    <code>$ aether project create hello-world</code><br>
+                    <code>$ aether run --target=local</code>
+                </div>
+                <div class="p-6 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded-r-xl">
+                    <p class="text-blue-700 dark:text-blue-300 font-medium">提示：请确保您的设备已开启虚拟化支持 (VT-x/AMD-V)。</p>
+                </div>
             </div>
-            <div class="stat-item">
-                <h4>20+</h4>
-                <p>完成的项目与实验</p>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <section id="contact">
-        <div class="contact-container reveal">
-            <div class="contact-info">
-                <h2>开始对话</h2>
-                <p>有合作意向，或者只是想聊聊新的想法？<br>随时欢迎来信。</p>
-            </div>
-            <div class="contact-links">
-                <a href="https://github.com/jjc114/" target="_blank">Github ↗</a>
-                <a href="https://space.bilibili.com/3493085046639270" target="_blank">Bilibili ↗</a>
-            </div>
-        </div>
-    </section>
+    <button id="fab" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="fixed bottom-8 right-8 w-14 h-14 bg-md-secondary-container text-md-primary rounded-2xl shadow-lg flex items-center justify-center hover:shadow-xl active:scale-90 transition-all opacity-0 pointer-events-none">
+        <span class="material-symbols-outlined">arrow_upward</span>
+    </button>
 
-    <footer>
-        <div class="logo" style="font-size: 1rem;">Lancy's Space</div>
-        <p>&copy; 2025 Lancy. Based on minimalist principles.</p>
-    </footer>
+    <div id="toast" class="fixed bottom-0 left-1/2 -translate-x-1/2 mb-8 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 px-6 py-3 rounded-full text-sm font-medium shadow-2xl z-[100] flex items-center gap-3">
+        <span class="material-symbols-outlined text-sm">info</span>
+        <span id="toast-message">操作成功</span>
+    </div>
 
     <script>
-        // --- 1. 高密度 3D 粒子网络 ---
-        const canvas = document.getElementById('canvas3d');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
-        const mouse = { x: 0, y: 0, isActive: false };
-
-        function resize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-            initParticles();
-        }
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.z = Math.random() * 0.8 + 0.2; 
-                // 稍微减小粒子基础大小，因为数量多了
-                this.baseSize = Math.random() * 2.0;
-                
-                // 【修改点1：提高随机速度】
-                // 速度系数从 0.5 提高到 1.8，让粒子自身运动更活跃
-                this.vx = (Math.random() - 0.5) * 1.8 * this.z;
-                this.vy = (Math.random() - 0.5) * 1.8 * this.z;
+        // 1. 切换标签逻辑
+        function switchTab(tabId, el) {
+            // 进度条动画
+            const bar = document.getElementById('loading-bar');
+            bar.style.width = '30%';
+            
+            // 导航高亮
+            if (el) {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active', 'text-md-primary'));
+                el.classList.add('active', 'text-md-primary');
             }
 
-            update() {
-                // 基础随机移动
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // 鼠标交互 (仍然保留，但相对基础速度来说影响变小了)
-                if (mouse.isActive) {
-                    const dx = (mouse.x - width / 2) * 0.05;
-                    const dy = (mouse.y - height / 2) * 0.05;
-                    this.x += (dx * this.z - (this.x - width/2) * 0.01) * 0.08;
-                    this.y += (dy * this.z - (this.y - height/2) * 0.01) * 0.08;
-                }
-
-                // 边界循环
-                if (this.x < 0) this.x = width;
-                if (this.x > width) this.x = 0;
-                if (this.y < 0) this.y = height;
-                if (this.y > height) this.y = 0;
-            }
-
-            draw() {
-                const size = this.baseSize * this.z;
-                // 稍微降低透明度，避免太密集时显得杂乱
-                const opacity = 0.05 + this.z * 0.25;
-
-                ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            // 内容切换 (平滑淡出淡入)
+            setTimeout(() => {
+                bar.style.width = '70%';
+                document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+                document.getElementById('page-' + tabId).classList.remove('hidden');
+                bar.style.width = '100%';
+                setTimeout(() => bar.style.width = '0', 300);
+            }, 200);
         }
 
-        function initParticles() {
-            particles = [];
-            // 【修改点2：大幅增加粒子密度】
-            // 分母从 15000 改为 3000，粒子数量增加约 5 倍，填满屏幕
-            const count = Math.floor((width * height) / 3000);
-            for (let i = 0; i < count; i++) {
-                particles.push(new Particle());
-            }
+        // 2. 手风琴逻辑
+        function toggleAccordion(btn) {
+            const item = btn.parentElement;
+            const isActive = item.classList.contains('active');
+            document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
+            if (!isActive) item.classList.add('active');
         }
 
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            connectParticles();
-            requestAnimationFrame(animate);
+        // 3. Toast 系统
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        function connectParticles() {
-            // 【修改点3：优化连接距离】
-            // 因为粒子变密了，我们将最大连接距离从 150 缩小到 110
-            // 既能保持网络感，又能节省性能
-            const maxDist = 110;
-
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const p1 = particles[i];
-                    const p2 = particles[j];
-                    if (Math.abs(p1.z - p2.z) > 0.2) continue;
-
-                    const dx = p1.x - p2.x;
-                    const dy = p1.y - p2.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist < maxDist) {
-                        // 透明度也随新的最大距离调整，并稍微调高一点最大不透明度
-                        const alpha = (1 - dist / maxDist) * 0.18 * p1.z;
-                        ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(p1.x, p1.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.stroke();
-                    }
-                }
-            }
+        // 4. 复制代码逻辑
+        function copyCode(btn) {
+            showToast('代码已复制到剪贴板');
+            // 此处可添加 navigator.clipboard 逻辑
         }
 
-        window.addEventListener('resize', resize);
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-            mouse.isActive = true;
-        });
-        resize();
-        animate();
+        // 5. 深色模式
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            document.getElementById('theme-icon').innerText = isDark ? 'dark_mode' : 'light_mode';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
 
-
-        // --- 2. 原有逻辑 ---
+        // 6. 滚动监听 (FAB 显隐 & 导航阴影)
         window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 50) nav.classList.add('scrolled');
-            else nav.classList.remove('scrolled');
+            const fab = document.getElementById('fab');
+            if (window.scrollY > 300) {
+                fab.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                fab.classList.add('opacity-0', 'pointer-events-none');
+            }
         });
 
-        const textToType = ["设计师 (Designer)", "开发者 (Developer)", "探索者 (Explorer)"];
-        let typeIndex = 0;
-        let charIndex = 0;
-        let isDeleting = false;
-        const typeElement = document.getElementById('typewriter');
-
-        function type() {
-            const currentText = textToType[typeIndex];
-            if (isDeleting) {
-                typeElement.textContent = currentText.substring(0, charIndex - 1);
-                charIndex--;
-            } else {
-                typeElement.textContent = currentText.substring(0, charIndex + 1);
-                charIndex++;
-            }
-            let typeSpeed = isDeleting ? 50 : 100;
-            if (!isDeleting && charIndex === currentText.length) {
-                typeSpeed = 3000;
-                isDeleting = true;
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false;
-                typeIndex = (typeIndex + 1) % textToType.length;
-                typeSpeed = 500;
-            }
-            setTimeout(type, typeSpeed);
+        // 初始化
+        if (localStorage.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.getElementById('theme-icon').innerText = 'dark_mode';
         }
-        document.addEventListener('DOMContentLoaded', type);
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
-            });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
