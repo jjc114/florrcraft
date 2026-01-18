@@ -3,10 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LancyUI - 下一代开源分布式系统，以fun命名，带给你不一样的快乐体验">
     <title>LancyUI | 下一代开源分布式系统</title>
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <!-- 添加 favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
     
     <script>
         tailwind.config = {
@@ -15,13 +24,38 @@
                 extend: {
                     colors: {
                         'md-primary': '#005fb0',
+                        'md-primary-dark': '#003d7a',
                         'md-on-primary': '#ffffff',
                         'md-surface': '#fdfbff',
                         'md-surface-variant': '#e1e2ec',
                         'md-secondary-container': '#d6e3ff',
+                        'md-secondary-container-dark': '#3b4b6d',
                         'md-tertiary': '#7d5260'
                     },
-                    borderRadius: { 'md-xl': '28px' }
+                    borderRadius: { 
+                        'md-xl': '28px',
+                        'md-2xl': '32px'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
                 }
             }
         }
@@ -29,253 +63,729 @@
 
     <style>
         /* 1. MD3 进度条动画 */
-        #loading-bar { height: 3px; position: fixed; top: 0; left: 0; width: 0; background: #005fb0; z-index: 100; transition: width 0.3s ease; }
+        #loading-bar { 
+            height: 3px; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 0; 
+            background: linear-gradient(90deg, #005fb0, #4dabf7);
+            z-index: 100; 
+            transition: width 0.3s ease;
+        }
         
         /* 2. 导航激活状态 */
-        .nav-link { position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .nav-link.active { color: #005fb0; font-weight: 700; }
-        .nav-link::after {
-            content: ''; position: absolute; bottom: -4px; left: 50%; width: 0; height: 3px;
-            background: #005fb0; transform: translateX(-50%); transition: width 0.3s ease;
+        .nav-link { 
+            position: relative; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
         }
-        .nav-link.active::after { width: 100%; }
+        .nav-link.active { 
+            color: #005fb0; 
+            font-weight: 700; 
+        }
+        .nav-link::after {
+            content: ''; 
+            position: absolute; 
+            bottom: -4px; 
+            left: 50%; 
+            width: 0; 
+            height: 3px;
+            background: #005fb0; 
+            transform: translateX(-50%); 
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+        .nav-link.active::after { 
+            width: 100%; 
+        }
+        .nav-link:hover:not(.active)::after {
+            width: 60%;
+        }
 
         /* 3. Toast 弹出动画 */
-        #toast { transform: translateY(100px); transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1); }
-        #toast.show { transform: translateY(-32px); }
+        #toast { 
+            transform: translateY(100px) translateX(-50%); 
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0, 0, 0.2, 1), opacity 0.3s ease;
+        }
+        #toast.show { 
+            transform: translateY(-32px) translateX(-50%); 
+            opacity: 1;
+        }
 
         /* 4. 手风琴 */
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .accordion-item.active .accordion-content { max-height: 200px; }
-        .accordion-item.active .chevron { transform: rotate(180deg); }
+        .accordion-content { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.3s ease-out; 
+        }
+        .accordion-item.active .accordion-content { 
+            max-height: 200px; 
+        }
+        .accordion-item.active .chevron { 
+            transform: rotate(180deg); 
+        }
 
-        .hero-mask { background: linear-gradient(to bottom, transparent, #fdfbff); }
-        .dark .hero-mask { background: linear-gradient(to bottom, transparent, #1a1c1e); }
+        .hero-mask { 
+            background: linear-gradient(to bottom, transparent, #fdfbff 90%);
+        }
+        .dark .hero-mask { 
+            background: linear-gradient(to bottom, transparent, #1a1c1e 90%);
+        }
+
+        /* 5. 新增：卡片悬停效果 */
+        .feature-card {
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .dark .feature-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 6. 新增：按钮悬停效果增强 */
+        .btn-primary {
+            background: linear-gradient(135deg, #005fb0, #4dabf7);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 95, 176, 0.3);
+        }
+
+        /* 7. 新增：网格背景 */
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(0, 95, 176, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 95, 176, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        .dark .grid-bg {
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+
+        /* 8. 响应式改进 */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3.5rem;
+            }
+        }
+
+        /* 9. 性能优化：减少重绘 */
+        .will-change-transform {
+            will-change: transform;
+        }
     </style>
 </head>
 <body class="bg-md-surface dark:bg-[#1a1c1e] text-gray-900 dark:text-gray-100 overflow-x-hidden transition-colors duration-300">
 
     <div id="loading-bar"></div>
 
-    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-[#1a1c1e]/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('home')">
-                <span class="material-symbols-outlined text-md-primary text-3xl font-bold">dynamic_form</span>
+    <nav class="sticky top-0 z-50 bg-white/90 dark:bg-[#1a1c1e]/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer group" onclick="switchTab('home')">
+                <span class="material-symbols-outlined text-md-primary text-3xl font-bold transition-transform group-hover:scale-110">dynamic_form</span>
                 <span class="text-xl font-bold tracking-tight">LancyUI</span>
             </div>
-            <div class="hidden md:flex space-x-10">
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            
+            <div class="hidden md:flex space-x-8">
                 <button onclick="switchTab('home', this)" class="nav-link active text-sm font-medium">概览</button>
-                <button onclick="switchTab('features', this)" class="nav-link text-gray-500 text-sm font-medium">技术特性</button>
-                <button onclick="switchTab('docs', this)" class="nav-link text-gray-500 text-sm font-medium">安装指南</button>
+                <button onclick="switchTab('features', this)" class="nav-link text-gray-500 dark:text-gray-400 text-sm font-medium">技术特性</button>
+                <button onclick="switchTab('docs', this)" class="nav-link text-gray-500 dark:text-gray-400 text-sm font-medium">安装指南</button>
+                <button onclick="switchTab('community', this)" class="nav-link text-gray-500 dark:text-gray-400 text-sm font-medium">社区</button>
             </div>
-            <div class="flex items-center gap-4">
-                <button onclick="toggleDarkMode()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all">
+            
+            <div class="hidden md:flex items-center gap-3">
+                <button onclick="toggleDarkMode()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all will-change-transform" aria-label="切换主题">
                     <span id="theme-icon" class="material-symbols-outlined">light_mode</span>
                 </button>
-<button onclick="redirectToGithub()" class="flex items-center gap-2 bg-md-primary text-white px-6 py-2 rounded-full text-sm font-medium shadow-md hover:shadow-lg active:scale-95 transition-all">
-    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-    获取源码
-</button>
-<section id="page-community" class="page-content hidden px-6 py-24 text-center">
-    
-    <h2 class="text-4xl font-bold mb-8">参与贡献</h2>
-    <div class="bg-md-secondary-container/50 p-8 rounded-md-xl max-w-2xl mx-auto">
-        <p class="mb-6 text-md-on-secondary-container">发现 Bug 或有新想法？我们的代码完全透明。欢迎提交 Pull Request。</p>
-        <button onclick="redirectToGithub('issues')" class="px-8 py-3 border-2 border-md-primary text-md-primary rounded-full font-bold hover:bg-md-primary hover:text-white transition-all">
-            提交 Issue
-        </button>
-    </div>
-</section>
-
-<script>
-    const GITHUB_REPO = "https://github.com/jjc114"; // 替换为你的真实链接
-
-    /**
-     * 重定向至 GitHub，并触发 Toast 提示
-     * @param {string} path - 可选路径，如 'issues' 或 'pulls'
-     */
-    function redirectToGithub(path = "") {
-        const url = path ? `${GITHUB_REPO}/${path}` : GITHUB_REPO;
-        
-        // 1. 显示 MD3 Toast 提示
-        showToast("正在前往 GitHub 仓库...");
-
-        // 2. 延迟跳转，给用户一个视觉反馈时间
-        setTimeout(() => {
-            window.open(url, '_blank');
-        }, 800);
-    }
-
-    // 现有的 Toast 显示逻辑
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        const toastMsg = document.getElementById('toast-message');
-        if (toast && toastMsg) {
-            toastMsg.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-    }
-</script>
+                <button onclick="redirectToGithub()" class="btn-primary flex items-center gap-2 text-white px-6 py-2.5 rounded-full text-sm font-medium shadow-md hover:shadow-lg active:scale-95 transition-all will-change-transform">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                    获取源码
                 </button>
+            </div>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+            <div class="px-4 py-3 space-y-2">
+                <button onclick="switchTab('home', this); toggleMobileMenu()" class="nav-link active block w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">概览</button>
+                <button onclick="switchTab('features', this); toggleMobileMenu()" class="nav-link block w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">技术特性</button>
+                <button onclick="switchTab('docs', this); toggleMobileMenu()" class="nav-link block w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">安装指南</button>
+                <button onclick="switchTab('community', this); toggleMobileMenu()" class="nav-link block w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">社区</button>
+                <div class="pt-3 border-t border-gray-100 dark:border-gray-800">
+                    <button onclick="toggleDarkMode()" class="flex items-center gap-2 w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                        <span id="mobile-theme-icon" class="material-symbols-outlined">light_mode</span>
+                        <span>切换主题</span>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
     <main class="min-h-screen">
-        
+        <!-- 首页 -->
         <section id="page-home" class="page-content block">
-            <div class="relative h-[80vh] flex items-center justify-center text-center overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=2000" class="absolute inset-0 w-full h-full object-cover opacity-30 dark:opacity-20" alt="Hero">
+            <div class="relative h-[85vh] flex items-center justify-center text-center overflow-hidden grid-bg">
+                <!-- 背景图片使用懒加载 -->
+                <img 
+                    src="https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=2000" 
+                    class="absolute inset-0 w-full h-full object-cover opacity-30 dark:opacity-20"
+                    alt="Technology Background"
+                    loading="lazy"
+                >
                 <div class="hero-mask absolute inset-0"></div>
-                <div class="relative z-10 px-6">
-                    <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tight">Lancy<span class="text-md-primary">.fun</span></h1>
-                    <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">以fun命名,带给你不一样的快乐!</p>
-                    <button onclick="switchTab('docs')" class="px-12 py-4 bg-md-primary text-white rounded-full font-bold shadow-xl hover:scale-105 active:scale-95 transition-all">开始安装LancyUI</button>
+                
+                <!-- 浮动元素 -->
+                <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+                
+                <div class="relative z-10 px-4 sm:px-6 max-w-6xl mx-auto animate-fade-in">
+                    <h1 class="hero-title text-5xl sm:text-7xl md:text-8xl font-black mb-6 tracking-tight leading-tight">
+                        Lancy<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">.fun</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed animate-slide-up">
+                        LancyUI是一个基于Linux的虚拟化操作系统,它以Fun命名,带给你不一样的体验!
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style="animation-delay: 0.1s">
+                        <button onclick="switchTab('docs')" class="btn-primary px-12 py-4 text-white rounded-full font-bold shadow-xl hover:shadow-2xl active:scale-95 transition-all">
+                            开始安装 LancyUI
+                        </button>
+                        <button onclick="redirectToGithub()" class="px-12 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-full font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
+                            查看 GitHub
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 滚动提示 -->
+                <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-pulse-slow">
+                    <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 animate-float">expand_more</span>
                 </div>
             </div>
 
-            <div class="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-8 bg-gray-50 dark:bg-gray-800/50 rounded-md-xl border border-gray-100 dark:border-gray-700">
-                    <h3 class="font-bold text-gray-400 mb-4 uppercase tracking-widest text-xs">延迟对比 (ms)</h3>
-                    <div class="space-y-4">
-                        <div class="relative pt-1">
-                            <div class="flex items-center justify-between mb-1"><span class="text-xs font-semibold">传统系统</span><span class="text-xs font-semibold">120ms</span></div>
-                            <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200"><div style="width:80%" class="bg-gray-400"></div></div>
+            <!-- 特性卡片 -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+                <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">核心优势</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                    <div class="feature-card p-8 bg-white dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6">
+                            <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">bolt</span>
                         </div>
-                        <div class="relative pt-1">
-                            <div class="flex items-center justify-between mb-1"><span class="text-xs font-semibold text-md-primary">LancyUI</span><span class="text-xs font-semibold text-md-primary">0.8ms</span></div>
-                            <div class="overflow-hidden h-2 text-xs flex rounded bg-md-secondary-container"><div style="width:15%" class="bg-md-primary"></div></div>
-                        </div>
+                        <h3 class="text-xl font-bold mb-4">极致性能</h3>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            微内核设计带来前所未有的响应速度，延迟降低至传统系统的 1/150
+                        </p>
                     </div>
-                </div>
-                <div class="md:col-span-2 p-8 bg-md-secondary-container/30 rounded-md-xl">
-                    <h3 class="text-2xl font-bold mb-4">为什么选择 LancyUI?</h3>
-                    <p class="text-gray-600 dark:text-gray-400">不同于通用的 Linux 发行版，我们剥离了繁重的驱动层，直接在微内核之上提供 WASM 运行时，让应用部署速度提升 3 倍。</p>
+                    
+                    <div class="feature-card p-8 bg-white dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6">
+                            <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-2xl">security</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">安全隔离</h3>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            硬件级资源隔离，确保每个应用运行在独立的安全沙箱中
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card p-8 bg-white dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6">
+                            <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-2xl">devices</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">跨平台支持</h3>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            一次编译，全平台运行，支持 ARM、x86、RISC-V 等多种架构
+                        </p>
+                    </div>
                 </div>
             </div>
             
+            <!-- 性能对比图表 -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+                <div class="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-3xl p-8 shadow-xl">
+                    <h3 class="font-bold text-gray-400 mb-6 uppercase tracking-widest text-sm">性能对比 (延迟)</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
+                                    <span class="text-sm font-semibold">传统系统</span>
+                                </div>
+                                <span class="text-sm font-semibold">120ms</span>
+                            </div>
+                            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-gray-400 rounded-full transition-all duration-1000" style="width: 0%" id="bar-traditional"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                                    <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">LancyUI</span>
+                                </div>
+                                <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">0.8ms</span>
+                            </div>
+                            <div class="h-3 bg-blue-100 dark:bg-blue-900/30 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-1000" style="width: 0%" id="bar-lancyui"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                        <p class="text-blue-700 dark:text-blue-300 text-sm">
+                            <span class="font-bold">性能提升 150 倍</span> - 基于微内核架构的优化，大幅降低系统调用开销
+                        </p>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <section id="page-features" class="page-content hidden px-6 py-20 max-w-5xl mx-auto">
-            <h2 class="text-4xl font-bold mb-12 text-center">核心架构特性</h2>
+        <!-- 技术特性 -->
+        <section id="page-features" class="page-content hidden px-4 sm:px-6 py-16 sm:py-20 max-w-5xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">核心架构特性</h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    基于现代设计理念，为分布式计算提供完整的解决方案
+                </p>
+            </div>
             
             <div class="space-y-4">
-                <div class="accordion-item border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden active">
-                    <button onclick="toggleAccordion(this)" class="w-full p-6 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
-                        <span class="font-bold">01. 声明式资源管理</span>
+                <div class="accordion-item border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden active hover:shadow-md transition-all">
+                    <button onclick="toggleAccordion(this)" class="w-full p-6 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-left">
+                        <div class="flex items-center gap-4">
+                            <span class="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg font-bold">01</span>
+                            <span class="font-bold text-lg">声明式资源管理</span>
+                        </div>
                         <span class="material-symbols-outlined chevron transition-transform">expand_more</span>
                     </button>
                     <div class="accordion-content bg-gray-50/50 dark:bg-gray-900/50">
-                        <div class="p-6 text-gray-600 dark:text-gray-400">通过 YAML 格式定义资源配额，内核自动完成 CPU 与内存的硬性隔离，防止单个应用导致系统崩溃。</div>
+                        <div class="p-6 text-gray-600 dark:text-gray-400">
+                            <p class="mb-4">通过简洁的 YAML 配置定义资源配额，系统自动完成 CPU、内存和存储的硬性隔离，无需手动干预。</p>
+                            <div class="bg-gray-800 rounded-lg p-4 font-mono text-sm">
+                                <code class="text-green-400">resources:</code><br>
+                                <code class="text-blue-400 ml-4">cpu: "2"</code><br>
+                                <code class="text-blue-400 ml-4">memory: "4Gi"</code><br>
+                                <code class="text-blue-400 ml-4">storage: "20Gi"</code>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="accordion-item border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
-                    <button onclick="toggleAccordion(this)" class="w-full p-6 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
-                        <span class="font-bold">02. 跨平台二进制分发</span>
+                
+                <div class="accordion-item border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:shadow-md transition-all">
+                    <button onclick="toggleAccordion(this)" class="w-full p-6 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-left">
+                        <div class="flex items-center gap-4">
+                            <span class="flex items-center justify-center w-8 h-8 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg font-bold">02</span>
+                            <span class="font-bold text-lg">跨平台二进制分发</span>
+                        </div>
                         <span class="material-symbols-outlined chevron transition-transform">expand_more</span>
                     </button>
                     <div class="accordion-content bg-gray-50/50 dark:bg-gray-900/50">
-                        <div class="p-6 text-gray-600 dark:text-gray-400">支持一次编译，在 ARM、x86 及 RISC-V 架构上无缝运行，内核自动处理指令集差异。</div>
+                        <div class="p-6 text-gray-600 dark:text-gray-400">
+                            <p>支持一次编译，在多种架构上无缝运行。内核自动处理指令集差异，提供统一的运行时环境。</p>
+                            <div class="flex gap-4 mt-4">
+                                <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">ARM64</span>
+                                <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">x86_64</span>
+                                <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">RISC-V</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden hover:shadow-md transition-all">
+                    <button onclick="toggleAccordion(this)" class="w-full p-6 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-left">
+                        <div class="flex items-center gap-4">
+                            <span class="flex items-center justify-center w-8 h-8 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg font-bold">03</span>
+                            <span class="font-bold text-lg">智能负载均衡</span>
+                        </div>
+                        <span class="material-symbols-outlined chevron transition-transform">expand_more</span>
+                    </button>
+                    <div class="accordion-content bg-gray-50/50 dark:bg-gray-900/50">
+                        <div class="p-6 text-gray-600 dark:text-gray-400">
+                            <p>基于机器学习的动态负载均衡算法，实时分析系统状态，自动优化资源分配，确保最佳性能。</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="page-docs" class="page-content hidden px-6 py-20 max-w-4xl mx-auto">
+        <!-- 安装指南 -->
+        <section id="page-docs" class="page-content hidden px-4 sm:px-6 py-16 sm:py-20 max-w-4xl mx-auto">
             <div class="prose dark:prose-invert max-w-none">
-                <h2 class="text-3xl font-bold mb-6">快速上手</h2>
-                <div class="bg-gray-900 text-gray-300 p-6 rounded-md-xl font-mono text-sm mb-8 relative group">
-                    <button onclick="copyCode(this)" class="absolute top-4 right-4 p-2 bg-white/10 rounded-lg opacity-0 group-hover:opacity-100 transition-all">
-                        <span class="material-symbols-outlined text-sm">content_copy</span>
-                    </button>
-                    <code>$ aether install-toolchain</code><br>
-                    <code>$ aether project create hello-world</code><br>
-                    <code>$ aether run --target=local</code>
+                <h2 class="text-3xl font-bold mb-8">快速开始</h2>
+                
+                <div class="bg-gradient-to-br from-gray-900 to-black text-gray-300 p-6 sm:p-8 rounded-2xl font-mono text-sm mb-8 relative group border border-gray-800">
+                    <div class="absolute top-4 right-4 flex gap-2">
+                        <button onclick="copyCode(this)" class="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100" title="复制代码">
+                            <span class="material-symbols-outlined text-sm">content_copy</span>
+                        </button>
+                        <button onclick="runTerminalDemo()" class="p-2 bg-blue-500/20 rounded-lg hover:bg-blue-500/30 transition-all opacity-0 group-hover:opacity-100" title="运行演示">
+                            <span class="material-symbols-outlined text-sm">play_arrow</span>
+                        </button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <span class="text-green-400"># 1. 安装工具链</span><br>
+                        <code class="text-white">$ curl -fsSL https://get.lancy.fun | bash</code>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <span class="text-green-400"># 2. 创建项目</span><br>
+                        <code class="text-white">$ lancy create my-project --template=webapp</code>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <span class="text-green-400"># 3. 部署运行</span><br>
+                        <code class="text-white">$ cd my-project && lancy deploy --cluster=local</code>
+                    </div>
+                    
+                    <div>
+                        <span class="text-green-400"># 4. 查看状态</span><br>
+                        <code class="text-white">$ lancy status</code>
+                    </div>
+                    
+                    <!-- 终端输出模拟 -->
+                    <div id="terminal-output" class="hidden mt-4 pt-4 border-t border-gray-800">
+                        <div class="flex items-center gap-2 text-yellow-400 mb-2">
+                            <span class="material-symbols-outlined text-sm">terminal</span>
+                            <span>正在部署...</span>
+                        </div>
+                        <div class="space-y-1 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span>✓ 容器镜像拉取完成</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span>✓ 网络配置完成</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span>✓ 服务启动成功</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="p-6 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded-r-xl">
-                    <p class="text-blue-700 dark:text-blue-300 font-medium">提示：请确保您的设备已开启虚拟化支持 (VT-x/AMD-V)。</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border-l-4 border-blue-500">
+                        <h4 class="text-blue-700 dark:text-blue-300 font-bold mb-2">系统要求</h4>
+                        <ul class="text-sm text-blue-600 dark:text-blue-400 space-y-1">
+                            <li>• 支持虚拟化技术 (VT-x/AMD-V)</li>
+                            <li>• 至少 4GB 空闲内存</li>
+                            <li>• 20GB 可用磁盘空间</li>
+                            <li>• Linux/MacOS/Windows WSL2</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="p-6 bg-green-50 dark:bg-green-900/20 rounded-xl border-l-4 border-green-500">
+                        <h4 class="text-green-700 dark:text-green-300 font-bold mb-2">快速验证</h4>
+                        <p class="text-sm text-green-600 dark:text-green-400">
+                            运行以下命令验证安装是否成功：<br>
+                            <code class="bg-green-100 dark:bg-green-900 px-2 py-1 rounded">$ lancy version</code>
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
-    </main>
 
-    <button id="fab" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="fixed bottom-8 right-8 w-14 h-14 bg-md-secondary-container text-md-primary rounded-2xl shadow-lg flex items-center justify-center hover:shadow-xl active:scale-90 transition-all opacity-0 pointer-events-none">
-        <span class="material-symbols-outlined">arrow_upward</span>
-    </button>
+        <!-- 社区页面 -->
+        <section id="page-community" class="page-content hidden px-4 sm:px-6 py-16 sm:py-20">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-6">加入社区</h2>
+                <p class="text-gray-600 dark:text-gray-400 text-lg mb-12 max-w-2xl mx-auto">
+                    与全球开发者一起，共同构建下一代分布式系统
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div class="p-8 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all">
+                        <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8 fill-current text-blue-600 dark:text-blue-400" viewBox="0 0 24 24">
+                                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">Github</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-6">
+                            查看源代码、提交 Issue、参与 Pull Request
+                        </p>
+                         <button onclick="window.location.href='../routeEdit/index.html'" type="button" id="add">打开</button>
+                    </div>
+                    <script>
+    // 配置常量
+    const GITHUB_REPO = "https://github.com/jjc114";
+    
+    // 页面加载完成后的初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        initPerformanceBars();
+        initMobileMenu();
+        setupIntersectionObserver();
+    });
 
-    <div id="toast" class="fixed bottom-0 left-1/2 -translate-x-1/2 mb-8 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 px-6 py-3 rounded-full text-sm font-medium shadow-2xl z-[100] flex items-center gap-3">
-        <span class="material-symbols-outlined text-sm">info</span>
-        <span id="toast-message">操作成功</span>
-    </div>
+    // 1. 切换标签页功能
+    function switchTab(tabId, el = null) {
+        // 进度条动画
+        const bar = document.getElementById('loading-bar');
+        bar.style.width = '30%';
+        
+        // 导航高亮
+        if (el) {
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.classList.remove('active', 'text-md-primary');
+                l.classList.add('text-gray-500', 'dark:text-gray-400');
+            });
+            el.classList.remove('text-gray-500', 'dark:text-gray-400');
+            el.classList.add('active', 'text-md-primary');
+        }
 
-    <script>
-        // 1. 切换标签逻辑
-        function switchTab(tabId, el) {
-            // 进度条动画
-            const bar = document.getElementById('loading-bar');
-            bar.style.width = '30%';
+        // 内容切换
+        setTimeout(() => {
+            bar.style.width = '70%';
             
-            // 导航高亮
-            if (el) {
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active', 'text-md-primary'));
-                el.classList.add('active', 'text-md-primary');
+            // 隐藏所有页面内容
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+                page.classList.remove('block');
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById('page-' + tabId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                targetPage.classList.add('block');
+                // 滚动到页面顶部
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+            
+            bar.style.width = '100%';
+            setTimeout(() => bar.style.width = '0', 300);
+        }, 200);
+    }
 
-            // 内容切换 (平滑淡出淡入)
-            setTimeout(() => {
-                bar.style.width = '70%';
-                document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
-                document.getElementById('page-' + tabId).classList.remove('hidden');
-                bar.style.width = '100%';
-                setTimeout(() => bar.style.width = '0', 300);
-            }, 200);
-        }
-
-        // 2. 手风琴逻辑
-        function toggleAccordion(btn) {
-            const item = btn.parentElement;
-            const isActive = item.classList.contains('active');
-            document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
-            if (!isActive) item.classList.add('active');
-        }
-
-        // 3. Toast 系统
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // 4. 复制代码逻辑
-        function copyCode(btn) {
-            showToast('代码已复制到剪贴板');
-            // 此处可添加 navigator.clipboard 逻辑
-        }
-
-        // 5. 深色模式
-        function toggleDarkMode() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            document.getElementById('theme-icon').innerText = isDark ? 'dark_mode' : 'light_mode';
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        }
-
-        // 6. 滚动监听 (FAB 显隐 & 导航阴影)
-        window.addEventListener('scroll', () => {
-            const fab = document.getElementById('fab');
-            if (window.scrollY > 300) {
-                fab.classList.remove('opacity-0', 'pointer-events-none');
-            } else {
-                fab.classList.add('opacity-0', 'pointer-events-none');
+    // 2. 手风琴功能
+    function toggleAccordion(btn) {
+        const item = btn.closest('.accordion-item');
+        const isActive = item.classList.contains('active');
+        const allItems = document.querySelectorAll('.accordion-item');
+        
+        // 关闭其他所有项目
+        allItems.forEach(otherItem => {
+            if (otherItem !== item) {
+                otherItem.classList.remove('active');
             }
         });
-
-        // 初始化
-        if (localStorage.theme === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.getElementById('theme-icon').innerText = 'dark_mode';
+        
+        // 切换当前项目
+        if (!isActive) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
         }
-    </script>
-</body>
-</html>
+    }
+
+    // 3. 深色模式切换
+    function toggleDarkMode() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        const themeIcon = document.getElementById('theme-icon');
+        const mobileThemeIcon = document.getElementById('mobile-theme-icon');
+        
+        if (isDark) {
+            themeIcon.textContent = 'dark_mode';
+            if (mobileThemeIcon) mobileThemeIcon.textContent = 'dark_mode';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            themeIcon.textContent = 'light_mode';
+            if (mobileThemeIcon) mobileThemeIcon.textContent = 'light_mode';
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // 4. GitHub 跳转功能
+    function redirectToGithub(path = "") {
+        const url = path ? `${GITHUB_REPO}/${path}` : GITHUB_REPO;
+        
+        // 显示 Toast 提示
+        showToast("正在前往 GitHub 仓库...");
+
+        // 延迟跳转，给用户视觉反馈
+        setTimeout(() => {
+            window.open(url, '_blank');
+        }, 800);
+    }
+
+    // 5. Toast 提示系统
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-message');
+        
+        if (toast && toastMsg) {
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    }
+
+    // 6. 复制代码功能
+    function copyCode(btn) {
+        const codeBlock = btn.closest('div[class*="bg-gradient"]') || 
+                         btn.closest('.bg-gray-900') || 
+                         btn.closest('div[class*="font-mono"]');
+        
+        if (codeBlock) {
+            const code = codeBlock.innerText;
+            const cleanCode = code.replace(/[\$\#]/g, '').trim();
+            
+            navigator.clipboard.writeText(cleanCode).then(() => {
+                showToast('代码已复制到剪贴板');
+                
+                // 添加视觉反馈
+                btn.innerHTML = '<span class="material-symbols-outlined text-sm">check</span>';
+                btn.classList.add('bg-green-500/20');
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<span class="material-symbols-outlined text-sm">content_copy</span>';
+                    btn.classList.remove('bg-green-500/20');
+                }, 2000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showToast('复制失败，请手动选择文本');
+            });
+        }
+    }
+
+    // 7. 移动端菜单
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const btn = document.getElementById('mobile-menu-btn');
+        
+        if (menu && btn) {
+            menu.classList.toggle('hidden');
+            
+            if (menu.classList.contains('hidden')) {
+                btn.innerHTML = '<span class="material-symbols-outlined">menu</span>';
+            } else {
+                btn.innerHTML = '<span class="material-symbols-outlined">close</span>';
+            }
+        }
+    }
+
+    // 8. 初始化移动端菜单
+    function initMobileMenu() {
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        if (menuBtn) {
+            menuBtn.addEventListener('click', toggleMobileMenu);
+        }
+        
+        // 点击菜单项后自动关闭菜单
+        document.querySelectorAll('#mobile-menu .nav-link').forEach(item => {
+            item.addEventListener('click', () => {
+                setTimeout(toggleMobileMenu, 300);
+            });
+        });
+    }
+
+    // 9. 性能条动画
+    function initPerformanceBars() {
+        setTimeout(() => {
+            const traditionalBar = document.getElementById('bar-traditional');
+            const lancyBar = document.getElementById('bar-lancyui');
+            
+            if (traditionalBar) traditionalBar.style.width = '100%';
+            if (lancyBar) lancyBar.style.width = '15%';
+        }, 500);
+    }
+
+    // 10. 终端演示功能
+    function runTerminalDemo() {
+        const output = document.getElementById('terminal-output');
+        const button = document.querySelector('[onclick="runTerminalDemo()"]');
+        
+        if (output && button) {
+            // 显示输出区域
+            output.classList.remove('hidden');
+            output.classList.add('animate-fade-in');
+            
+            // 禁用按钮并改变状态
+            button.disabled = true;
+            button.innerHTML = '<span class="material-symbols-outlined text-sm">check</span>';
+            button.classList.remove('bg-blue-500/20');
+            button.classList.add('bg-green-500/20');
+            
+            // 显示成功消息
+            setTimeout(() => {
+                showToast('演示完成！系统部署成功');
+            }, 1500);
+        }
+    }
+
+    // 11. 滚动监听
+    let lastScrollTop = 0;
+    window.addEventListener('scroll', () => {
+        const fab = document.getElementById('fab');
+        const nav = document.querySelector('nav');
+        
+        // FAB 显示/隐藏
+        if (window.scrollY > 300) {
+            fab.classList.remove('opacity-0', 'pointer-events-none');
+            fab.classList.add('opacity-100');
+        } else {
+            fab.classList.add('opacity-0', 'pointer-events-none');
+            fab.classList.remove('opacity-100');
+        }
+        
+        // 导航栏阴影
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (currentScrollTop > lastScrollTop && currentScrollTop > 100) {
+            nav.classList.add('shadow-lg');
+        } else {
+            nav.classList.remove('shadow-lg');
+        }
+        lastScrollTop = currentScrollTop;
+    });
+
+    // 12. 交互动画观察器
+    function setupIntersectionObserver() {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+        
+        // 观察所有卡片和特性区域
+        document.querySelectorAll('.feature-card, .accordion-item').forEach(el => {
+            observer.observe(el);
+        });
+    }
+
+    // 13. 初始化主题
+    function initTheme() {
+        if (localStorage.getItem('theme') === 'dark' || 
+            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            const themeIcon = document.getElementById('theme-icon');
+            const mobileThemeIcon = document.getElementById('mobile-theme-icon');
+            if (themeIcon) themeIcon.textContent = 'dark_mode';
+            if (mobileThemeIcon) mobileThemeIcon.textContent = 'dark_mode';
+        }
+    }
+
+    // 页面加载时初始化
+    initTheme();
+</script>
